@@ -14,7 +14,7 @@ import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String NAME="smart_pantry.db";
-    private static final int VERSION=1;
+    private static final int VERSION=2;
     public DatabaseHelper(Context context) { super(context,NAME,null,VERSION); }
     @Override public void onConfigure(SQLiteDatabase db) { db.setForeignKeyConstraintsEnabled(true); }
     @Override public void onCreate(SQLiteDatabase db) {
@@ -23,10 +23,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE recipes(id INTEGER PRIMARY KEY, name TEXT NOT NULL UNIQUE, description TEXT, instructions TEXT NOT NULL, preparation_time INTEGER)");
         db.execSQL("CREATE TABLE recipe_ingredients(id INTEGER PRIMARY KEY, recipe_id INTEGER NOT NULL REFERENCES recipes(id) ON DELETE CASCADE, ingredient_name TEXT NOT NULL, normalized_name TEXT NOT NULL, quantity REAL NOT NULL CHECK(quantity > 0), unit TEXT NOT NULL)");
         db.execSQL("CREATE INDEX recipe_ingredient_recipe_idx ON recipe_ingredients(recipe_id)");
+        createRecipeUseTable(db);
         seedRecipes(db);
     }
     @Override public void onUpgrade(SQLiteDatabase db,int oldVersion,int newVersion) {
-        // Future migrations must alter only changed tables. The pantry is never dropped.
+        if(oldVersion<2) createRecipeUseTable(db);
+    }
+    private void createRecipeUseTable(SQLiteDatabase db) {
+        db.execSQL("CREATE TABLE IF NOT EXISTS recipe_uses(id INTEGER PRIMARY KEY AUTOINCREMENT, recipe_id INTEGER NOT NULL REFERENCES recipes(id) ON DELETE CASCADE, used_at INTEGER NOT NULL)");
+        db.execSQL("CREATE INDEX IF NOT EXISTS recipe_uses_recipe_idx ON recipe_uses(recipe_id)");
     }
     private ContentValues pantryValues(String name,double quantity,String unit,String expiry) {
         ContentValues values=new ContentValues(); values.put("name",name.trim()); values.put("normalized_name",IngredientNormalizer.normalize(name)); values.put("quantity",quantity); values.put("unit",unit); values.put("expiry_date",expiry); return values;
@@ -75,6 +80,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             while(cursor.moveToNext()) items.add(new RecipeIngredient(cursor.getString(0),cursor.getString(1),cursor.getDouble(2),cursor.getString(3)));
         }
         return items;
+    }
+    public void recordRecipeUsed(long recipeId) {
+        ContentValues values=new ContentValues(); values.put("recipe_id",recipeId); values.put("used_at",System.currentTimeMillis());
+        getWritableDatabase().insertOrThrow("recipe_uses",null,values);
+    }
+    public List<Recipe> getRecentlyUsedRecipes(int limit) {
+        List<Recipe> recipes=new ArrayList<>();
+        if(limit<=0) return recipes;
+        String sql="SELECT r.id,r.name,r.description,r.instructions,r.preparation_time FROM recipes r JOIN (SELECT recipe_id,MAX(id) AS latest FROM recipe_uses GROUP BY recipe_id) u ON u.recipe_id=r.id ORDER BY u.latest DESC LIMIT ?";
+        try(Cursor cursor=getReadableDatabase().rawQuery(sql,new String[]{String.valueOf(limit)})) {
+            while(cursor.moveToNext()) recipes.add(readRecipe(cursor));
+        }
+        return recipes;
     }
     private void seedRecipes(SQLiteDatabase db) {
         // onCreate runs once; explicit IDs and REPLACE avoidance keep this seed idempotent.

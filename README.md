@@ -8,11 +8,15 @@ Smart Pantry Manager is a native Java Android app for tracking leftover ingredie
 - Browse only recipes for which every required ingredient and quantity is available.
 - View full ingredients and numbered preparation steps for each recipe.
 - See live dashboard counts and optional expiring soon indicators.
+- See four color-coded Home jars for pantry items, possible recipes, expiring-soon items, and expired items.
+- Mark a recipe as cooked and reopen it from the five most recently cooked recipes on Home.
 - Store pantry and recipes offline with SQLite; persist the alert setting with SharedPreferences.
 
 ## Technology and database choice
 
 Java, XML layouts, AndroidX RecyclerView, Material Components, Gradle, and SQLiteOpenHelper. SQLite keeps the data on the device without a network connection, provides relational recipe and ingredient tables, and supports full CRUD with simple SQL that can be explained in the assignment video.
+
+Schema version 2 adds a `recipe_uses` table for recent cooking history. The migration creates that table without deleting Version 1 pantry records.
 
 ## Build and run
 

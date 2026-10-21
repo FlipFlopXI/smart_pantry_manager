@@ -4,6 +4,13 @@
         <TextView android:id="@+id/title" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="5dp" android:textColor="@color/ink" android:textSize="28sp" android:textStyle="bold"/>
         <TextView android:id="@+id/subtitle" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:textColor="@color/muted" android:textSize="15sp"/>
         <com.google.android.material.button.MaterialButton android:id="@+id/primary_button" style="@style/SoftActionButton" android:layout_width="match_parent" android:layout_height="56dp" android:layout_marginTop="18dp"/>
+        <HorizontalScrollView android:id="@+id/recipe_filters" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="14dp" android:fillViewport="true" android:scrollbars="none" android:visibility="gone">
+            <com.google.android.material.button.MaterialButtonToggleGroup android:id="@+id/filter_group" android:layout_width="wrap_content" android:layout_height="wrap_content" app:singleSelection="true" app:selectionRequired="true">
+                <com.google.android.material.button.MaterialButton android:id="@+id/filter_available" style="@style/RecipeFilterButton" android:layout_width="wrap_content" android:layout_height="44dp" android:text="Available"/>
+                <com.google.android.material.button.MaterialButton android:id="@+id/filter_nearly" style="@style/RecipeFilterButton" android:layout_width="wrap_content" android:layout_height="44dp" android:text="Nearly ready"/>
+                <com.google.android.material.button.MaterialButton android:id="@+id/filter_unavailable" style="@style/RecipeFilterButton" android:layout_width="wrap_content" android:layout_height="44dp" android:text="Unavailable"/>
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+        </HorizontalScrollView>
     </LinearLayout>
     <TextView android:id="@+id/empty" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_margin="20dp" android:padding="24dp" android:background="@drawable/card" android:textColor="@color/muted" android:textSize="16sp" android:gravity="center" android:visibility="gone"/>
     <androidx.recyclerview.widget.RecyclerView android:id="@+id/recycler" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:paddingStart="14dp" android:paddingEnd="14dp" android:paddingTop="14dp" android:paddingBottom="24dp" android:clipToPadding="false"/>

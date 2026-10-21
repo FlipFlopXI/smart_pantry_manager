@@ -57,6 +57,26 @@ public class RecipeMatchingServiceTest {
         pantry.set(0,pantry("egg",1,"pieces")); assertTrue(RecipeMatchingService.matching(pantry,Collections.singletonList(recipe)).isEmpty());
         pantry.set(0,pantry("egg",2,"pieces")); pantry.clear(); assertTrue(RecipeMatchingService.matching(pantry,Collections.singletonList(recipe)).isEmpty());
     }
+    @Test public void nearlyReadyRequiresHalfTheFullIngredientQuantities() {
+        Recipe recipe=recipe("egg|2|pieces","tomato|1|pieces","bread|2|pieces","milk|250|millilitres");
+        RecipeMatchingService.MatchProgress half=RecipeMatchingService.progress(recipe,Arrays.asList(pantry("eggs",2,"pieces"),pantry("tomatoes",1,"pieces")));
+        assertEquals(2,half.matched);
+        assertEquals(4,half.total);
+        assertTrue(half.isNearlyReady());
+        assertFalse(RecipeMatchingService.canMake(recipe,Arrays.asList(pantry("eggs",2,"pieces"),pantry("tomatoes",1,"pieces"))));
+        assertFalse(RecipeMatchingService.progress(recipe,Collections.singletonList(pantry("egg",2,"pieces"))).isNearlyReady());
+        assertFalse(RecipeMatchingService.progress(recipe,Arrays.asList(pantry("egg",1,"pieces"),pantry("tomato",1,"pieces"))).isNearlyReady());
+    }
+    @Test public void repeatedNamesCountAsOneRequirementAndFullMatchIsNotNearlyReady() {
+        Recipe recipe=recipe("egg|1|pieces","eggs|2|pieces","toast|1|pieces");
+        RecipeMatchingService.MatchProgress partial=RecipeMatchingService.progress(recipe,Collections.singletonList(pantry("egg",3,"pieces")));
+        assertEquals(1,partial.matched);
+        assertEquals(2,partial.total);
+        assertTrue(partial.isNearlyReady());
+        RecipeMatchingService.MatchProgress full=RecipeMatchingService.progress(recipe,Arrays.asList(pantry("egg",3,"pieces"),pantry("toast",1,"pieces")));
+        assertFalse(full.isNearlyReady());
+        assertTrue(RecipeMatchingService.canMake(recipe,Arrays.asList(pantry("egg",3,"pieces"),pantry("toast",1,"pieces"))));
+    }
     @Test public void validationRejectsInvalidAmounts() {
         assertTrue(Double.isNaN(ValidationUtils.positiveQuantity("0")));
         assertTrue(Double.isNaN(ValidationUtils.positiveQuantity("-2")));

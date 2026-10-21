@@ -10,17 +10,21 @@ import com.smartpantry.manager.R;
 import com.smartpantry.manager.models.Recipe;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.function.Consumer;
 
 public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.Holder> {
     private final List<Recipe> items=new ArrayList<>();
+    private final Map<Long,String> progressLabels=new HashMap<>();
     private final Consumer<Recipe> onOpen;
     public RecipeAdapter(Consumer<Recipe> onOpen) { this.onOpen=onOpen; setHasStableIds(true); }
-    public void setItems(List<Recipe> recipes) { items.clear(); items.addAll(recipes); notifyDataSetChanged(); }
+    public void setItems(List<Recipe> recipes) { setItems(recipes,new HashMap<>()); }
+    public void setItems(List<Recipe> recipes,Map<Long,String> labels) { items.clear(); items.addAll(recipes); progressLabels.clear(); progressLabels.putAll(labels); notifyDataSetChanged(); }
     @Override public long getItemId(int position) { return items.get(position).id; }
     @NonNull @Override public Holder onCreateViewHolder(@NonNull ViewGroup parent,int type) { return new Holder(LayoutInflater.from(parent.getContext()).inflate(R.layout.row_recipe,parent,false)); }
     @Override public void onBindViewHolder(@NonNull Holder holder,int position) {
-        Recipe recipe=items.get(position); holder.name.setText(recipe.name); holder.meta.setText(recipe.description+"  •  "+recipe.preparationTime+" min"); holder.view.setOnClickListener(v->onOpen.accept(recipe)); holder.itemView.setOnClickListener(v->onOpen.accept(recipe));
+        Recipe recipe=items.get(position); holder.name.setText(recipe.name); String progress=progressLabels.get(recipe.id); holder.meta.setText((progress==null?"":progress+"  •  ")+recipe.description+"  •  "+recipe.preparationTime+" min"); holder.view.setOnClickListener(v->onOpen.accept(recipe)); holder.itemView.setOnClickListener(v->onOpen.accept(recipe));
         holder.itemView.setAlpha(1f);
     }
     @Override public int getItemCount() { return items.size(); }

@@ -17,25 +17,34 @@ public final class RecipeMatchingService {
         return result;
     }
     public static boolean canMake(Recipe recipe,List<PantryItem> pantry) {
-        if(recipe.ingredients.isEmpty()) return false;
+        MatchProgress progress=progress(recipe,pantry);
+        return progress.total>0 && progress.matched==progress.total;
+    }
+    public static MatchProgress progress(Recipe recipe,List<PantryItem> pantry) {
         // Combine repeated recipe requirements before checking stock, so one pantry row is never reused twice.
         Map<String,Double> requiredAmounts=new HashMap<>();
         for(RecipeIngredient need:recipe.ingredients) {
             String dimension=UnitConverter.dimension(need.unit);
-            if(dimension.isEmpty()) return false;
             String key=need.normalizedName+"|"+dimension;
             requiredAmounts.put(key,requiredAmounts.getOrDefault(key,0d)+UnitConverter.baseAmount(need.quantity,need.unit));
         }
+        int matched=0;
         for(Map.Entry<String,Double> requirement:requiredAmounts.entrySet()) {
             String[] parts=requirement.getKey().split("\\|",2);
+            if(parts[1].isEmpty()) continue;
             double available=0;
             for(PantryItem item:pantry) {
                 if(parts[0].equals(IngredientNormalizer.normalize(item.name)) && parts[1].equals(UnitConverter.dimension(item.unit)))
                     available+=UnitConverter.baseAmount(item.quantity,item.unit);
             }
             double required=requirement.getValue();
-            if(available+1e-9*Math.max(1d,required)<required) return false;
+            if(available+1e-9*Math.max(1d,required)>=required) matched++;
         }
-        return true;
+        return new MatchProgress(matched,requiredAmounts.size());
+    }
+    public static final class MatchProgress {
+        public final int matched,total;
+        private MatchProgress(int matched,int total) { this.matched=matched; this.total=total; }
+        public boolean isNearlyReady() { return total>0 && matched<total && matched*2>=total; }
     }
 }

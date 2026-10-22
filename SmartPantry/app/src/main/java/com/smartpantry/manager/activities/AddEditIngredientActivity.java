@@ -14,6 +14,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.smartpantry.manager.R;
 import com.smartpantry.manager.database.DatabaseHelper;
 import com.smartpantry.manager.models.PantryItem;
+import com.smartpantry.manager.utils.HelpUi;
 import com.smartpantry.manager.utils.ValidationUtils;
 import java.time.LocalDate;
 import java.util.Locale;
@@ -30,8 +31,11 @@ public class AddEditIngredientActivity extends AppCompatActivity {
     @Override protected void onCreate(Bundle state) {
         super.onCreate(state); setContentView(R.layout.activity_form);
         itemId=getIntent().getLongExtra("item_id",-1);
+        HelpUi.attach(this,itemId<0?HelpUi.Topic.ADD:HelpUi.Topic.EDIT);
         name=findViewById(R.id.name); quantity=findViewById(R.id.quantity); unit=findViewById(R.id.unit);
-        unit.setAdapter(new ArrayAdapter<>(this,android.R.layout.simple_spinner_dropdown_item,UNITS));
+        ArrayAdapter<String> unitAdapter=new ArrayAdapter<>(this,R.layout.spinner_unit_selected,UNITS);
+        unitAdapter.setDropDownViewResource(R.layout.spinner_unit_dropdown);
+        unit.setAdapter(unitAdapter);
         ((TextView)findViewById(R.id.title)).setText(itemId<0?"Add ingredient":"Edit ingredient");
         findViewById(R.id.back).setOnClickListener(v->{ startActivity(new Intent(this,PantryActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP)); finish(); });
         findViewById(R.id.cancel).setOnClickListener(v->finish());

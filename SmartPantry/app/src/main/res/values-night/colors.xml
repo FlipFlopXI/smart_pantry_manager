@@ -1,0 +1,15 @@
+<resources>
+    <color name="green">#91D9AC</color>
+    <color name="cream">#121C17</color>
+    <color name="orange">#F2B77D</color>
+    <color name="ink">#F2F6F0</color>
+    <color name="muted">#B7C9BC</color>
+    <color name="white">#203027</color>
+    <color name="deep_green">#DBF5E2</color>
+    <color name="action_green">#304B39</color>
+    <color name="soft_green_outline">#567A61</color>
+    <color name="jar_blue">#A0D3F5</color>
+    <color name="jar_red">#FFAAAA</color>
+    <color name="action_red">#493033</color>
+    <color name="soft_red_outline">#A97175</color>
+</resources>

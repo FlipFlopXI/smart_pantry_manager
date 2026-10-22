@@ -15,6 +15,7 @@ import com.smartpantry.manager.database.DatabaseHelper;
 import com.smartpantry.manager.models.PantryItem;
 import com.smartpantry.manager.models.Recipe;
 import com.smartpantry.manager.services.RecipeMatchingService;
+import com.smartpantry.manager.utils.HelpUi;
 import com.smartpantry.manager.utils.NavigationHelper;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,6 +32,7 @@ public class SuggestedRecipesActivity extends AppCompatActivity {
     private int selectedFilter=R.id.filter_available;
     @Override protected void onCreate(Bundle state) {
         super.onCreate(state); setContentView(R.layout.activity_list);
+        HelpUi.attach(this,HelpUi.Topic.RECIPES);
         ((TextView)findViewById(R.id.title)).setText("Suggested recipes");
         ((TextView)findViewById(R.id.primary_button)).setText("Open pantry");
         findViewById(R.id.primary_button).setOnClickListener(v->startActivity(new Intent(this,PantryActivity.class)));

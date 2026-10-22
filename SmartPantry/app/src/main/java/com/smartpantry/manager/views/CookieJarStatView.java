@@ -3,6 +3,7 @@ package com.smartpantry.manager.views;
 import android.animation.ValueAnimator;
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -10,6 +11,8 @@ import android.graphics.Path;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
+import androidx.core.content.ContextCompat;
+import com.smartpantry.manager.R;
 
 /** A glass cookie jar whose pastel fill rises with the displayed count. */
 public class CookieJarStatView extends View {
@@ -43,18 +46,21 @@ public class CookieJarStatView extends View {
         super.onDraw(canvas);
         float w=getWidth(), h=getHeight();
         if(w<=0||h<=0) return;
+        boolean dark=(getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK)==Configuration.UI_MODE_NIGHT_YES;
+        int surface=ContextCompat.getColor(getContext(),R.color.white);
+        int text=ContextCompat.getColor(getContext(),R.color.ink);
         float scale=Math.min(w/170f,h/192f);
         canvas.save(); canvas.translate((w-170f*scale)/2f,(h-192f*scale)/2f); canvas.scale(scale,scale);
 
         // A small shadow, glass shoulders and a broad rounded base make the silhouette jar-like.
-        paint.setStyle(Paint.Style.FILL); paint.setColor(0x1F31533D);
+        paint.setStyle(Paint.Style.FILL); paint.setColor(dark?0x99050D08:0x1F31533D);
         canvas.drawOval(new RectF(24,177,146,188),paint);
         body.reset(); body.moveTo(43,42); body.lineTo(127,42);
         body.cubicTo(128,52,139,56,142,71);
         body.lineTo(146,155); body.cubicTo(147,169,138,177,126,177);
         body.lineTo(44,177); body.cubicTo(32,177,23,169,24,155);
         body.lineTo(28,71); body.cubicTo(31,56,42,52,43,42); body.close();
-        paint.setColor(0xFFFDFEFC); canvas.drawPath(body,paint);
+        paint.setColor(surface); canvas.drawPath(body,paint);
 
         canvas.save(); canvas.clipPath(body);
         float top=173f-fillFraction*120f;
@@ -62,26 +68,26 @@ public class CookieJarStatView extends View {
         canvas.drawRect(22,top,148,180,paint);
         paint.setColor(withAlpha(accent,55));
         canvas.drawOval(new RectF(22,top-7,148,top+7),paint);
-        paint.setColor(0x80FFFFFF);
+        paint.setColor(dark?0x24FFFFFF:0x80FFFFFF);
         canvas.drawRoundRect(new RectF(36,66,43,146),4,4,paint);
         canvas.restore();
 
         paint.setStyle(Paint.Style.STROKE); paint.setStrokeWidth(2.4f); paint.setColor(withAlpha(accent,210));
         canvas.drawPath(body,paint); paint.setStyle(Paint.Style.FILL);
-        paint.setColor(0xFFFCFCF8); canvas.drawRoundRect(new RectF(36,31,134,48),7,7,paint);
+        paint.setColor(surface); canvas.drawRoundRect(new RectF(36,31,134,48),7,7,paint);
         paint.setStyle(Paint.Style.STROKE); paint.setStrokeWidth(2.3f); paint.setColor(accent);
         canvas.drawRoundRect(new RectF(36,31,134,48),7,7,paint);
         paint.setStyle(Paint.Style.FILL); paint.setColor(withAlpha(accent,85));
         canvas.drawRoundRect(new RectF(67,22,103,32),5,5,paint);
-        paint.setColor(0xFFFCFCF8); canvas.drawOval(new RectF(48,162,122,172),paint);
+        paint.setColor(surface); canvas.drawOval(new RectF(48,162,122,172),paint);
 
         paint.setTextAlign(Paint.Align.CENTER); paint.setTypeface(android.graphics.Typeface.create("sans-serif-rounded",android.graphics.Typeface.BOLD));
         paint.setColor(accent); paint.setTextSize(value>999?36:44);
         canvas.drawText(String.valueOf(value),85,112,paint);
         paint.setTypeface(android.graphics.Typeface.create("sans-serif-medium",android.graphics.Typeface.NORMAL));
-        paint.setColor(0xE8FDFEFC);
+        paint.setColor(dark?0xEE304B39:0xE8FDFEFC);
         canvas.drawRoundRect(new RectF(31,128,139,158),11,11,paint);
-        paint.setTextSize(label.length()>16?12.5f:14f); paint.setColor(0xFF26332B);
+        paint.setTextSize(label.length()>16?12.5f:14f); paint.setColor(text);
         canvas.drawText(label,85,149,paint);
         canvas.restore();
     }

@@ -12,6 +12,7 @@ import com.smartpantry.manager.R;
 import com.smartpantry.manager.adapters.PantryAdapter;
 import com.smartpantry.manager.database.DatabaseHelper;
 import com.smartpantry.manager.models.PantryItem;
+import com.smartpantry.manager.utils.HelpUi;
 import com.smartpantry.manager.utils.NavigationHelper;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -22,6 +23,7 @@ public class PantryActivity extends AppCompatActivity {
     private PantryAdapter adapter;
     @Override protected void onCreate(Bundle state) {
         super.onCreate(state); setContentView(R.layout.activity_list);
+        HelpUi.attach(this,HelpUi.Topic.PANTRY);
         ((TextView)findViewById(R.id.title)).setText("Your pantry");
         ((TextView)findViewById(R.id.subtitle)).setText("Everything you have on hand");
         ((TextView)findViewById(R.id.primary_button)).setText("+ Add ingredient");

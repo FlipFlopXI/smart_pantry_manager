@@ -9,6 +9,7 @@ import com.smartpantry.manager.R;
 import com.smartpantry.manager.database.DatabaseHelper;
 import com.smartpantry.manager.models.Recipe;
 import com.smartpantry.manager.models.RecipeIngredient;
+import com.smartpantry.manager.utils.HelpUi;
 import com.smartpantry.manager.utils.UnitConverter;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -17,6 +18,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
     private final ExecutorService worker=Executors.newSingleThreadExecutor();
     @Override protected void onCreate(Bundle state) {
         super.onCreate(state); setContentView(R.layout.activity_detail);
+        HelpUi.attach(this,HelpUi.Topic.DETAIL);
         findViewById(R.id.back).setOnClickListener(v->finish());
         long id=getIntent().getLongExtra("recipe_id",-1);
         Recipe recipe; try(DatabaseHelper db=new DatabaseHelper(this)) { recipe=db.getRecipe(id); }

@@ -1,4 +1,4 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:background="@color/cream"><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="20dp">
+<com.smartpantry.manager.views.WheelScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:background="@color/cream"><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="20dp">
     <TextView android:id="@+id/back" android:layout_width="wrap_content" android:layout_height="48dp" android:gravity="center_vertical" android:text="‹ Back to recipes" android:textColor="@color/green" android:textSize="16sp"/>
     <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:text="FROM YOUR PANTRY" android:textColor="@color/green" android:textSize="12sp" android:textStyle="bold" android:letterSpacing="0.12"/>
     <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:gravity="center" android:text="🍳" android:textSize="52sp"/>
@@ -7,4 +7,4 @@
     <TextView android:id="@+id/ingredients" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="22dp" android:padding="20dp" android:background="@drawable/card" android:elevation="2dp" android:textColor="@color/ink" android:textSize="16sp"/>
     <TextView android:id="@+id/instructions" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="14dp" android:padding="20dp" android:background="@drawable/card" android:elevation="2dp" android:textColor="@color/ink" android:textSize="16sp"/>
     <com.google.android.material.button.MaterialButton android:id="@+id/mark_cooked" style="@style/SoftActionButton" android:layout_width="match_parent" android:layout_height="58dp" android:layout_marginTop="20dp" android:layout_marginBottom="22dp" android:text="✓  Mark as cooked"/>
-</LinearLayout></ScrollView>
+</LinearLayout></com.smartpantry.manager.views.WheelScrollView>

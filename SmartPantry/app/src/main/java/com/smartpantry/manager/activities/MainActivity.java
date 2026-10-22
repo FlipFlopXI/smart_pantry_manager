@@ -13,6 +13,7 @@ import com.smartpantry.manager.database.DatabaseHelper;
 import com.smartpantry.manager.models.PantryItem;
 import com.smartpantry.manager.models.Recipe;
 import com.smartpantry.manager.services.RecipeMatchingService;
+import com.smartpantry.manager.utils.HelpUi;
 import com.smartpantry.manager.utils.NavigationHelper;
 import com.smartpantry.manager.views.CookieJarStatView;
 import java.time.LocalDate;
@@ -24,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private final ExecutorService worker=Executors.newSingleThreadExecutor();
     @Override protected void onCreate(Bundle state) {
         super.onCreate(state); setContentView(R.layout.activity_home);
+        HelpUi.attach(this,HelpUi.Topic.HOME);
         NavigationHelper.bind(this,findViewById(R.id.bottom_nav),R.id.nav_home);
         findViewById(R.id.add).setOnClickListener(v->startActivity(new Intent(this,AddEditIngredientActivity.class)));
         findViewById(R.id.pantry).setOnClickListener(v->startActivity(new Intent(this,PantryActivity.class)));

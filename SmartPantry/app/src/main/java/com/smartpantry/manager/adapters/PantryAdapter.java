@@ -22,19 +22,24 @@ public class PantryAdapter extends RecyclerView.Adapter<PantryAdapter.Holder> {
     public void setItems(List<PantryItem> values,boolean indicators) { items.clear(); items.addAll(values); expiryIndicators=indicators; notifyDataSetChanged(); }
     @Override public long getItemId(int position) { return items.get(position).id; }
     @NonNull @Override public Holder onCreateViewHolder(@NonNull ViewGroup parent,int type) { return new Holder(LayoutInflater.from(parent.getContext()).inflate(R.layout.row_pantry,parent,false)); }
-    @Override public void onBindViewHolder(@NonNull Holder holder,int position) {
+    @Override public void onBindViewHolder(@NonNull Holder holder,int position) {  //7. START.............................................................
         PantryItem item=items.get(position); holder.name.setText(item.name);
         String meta=UnitConverter.format(item.quantity)+" "+item.unit;
+        boolean expiresSoon=false;
         if(item.expiryDate!=null) {
             meta+="  •  Expires "+item.expiryDate;
-            if(expiryIndicators) try { LocalDate date=LocalDate.parse(item.expiryDate), today=LocalDate.now(); if(!date.isBefore(today) && !date.isAfter(today.plusDays(3))) meta+="  ⚠ Soon"; } catch(Exception ignored) {}
+            if(expiryIndicators) try {
+                LocalDate date=LocalDate.parse(item.expiryDate), today=LocalDate.now();
+                expiresSoon=!date.isBefore(today) && !date.isAfter(today.plusDays(3));
+            } catch(Exception ignored) {}
         }
+        holder.expiryBadge.setVisibility(expiresSoon?View.VISIBLE:View.GONE);
         holder.meta.setText(meta); holder.edit.setOnClickListener(v->actions.edit(item)); holder.delete.setOnClickListener(v->actions.delete(item));
-        holder.itemView.setAlpha(1f);
+        holder.itemView.setAlpha(1f);           //7. END.......................................................................................................
     }
     @Override public int getItemCount() { return items.size(); }
     static class Holder extends RecyclerView.ViewHolder {
-        final TextView name,meta; final View edit,delete;
-        Holder(View view) { super(view); name=view.findViewById(R.id.name); meta=view.findViewById(R.id.meta); edit=view.findViewById(R.id.edit); delete=view.findViewById(R.id.delete); }
+        final TextView name,meta,expiryBadge; final View edit,delete;
+        Holder(View view) { super(view); name=view.findViewById(R.id.name); meta=view.findViewById(R.id.meta); expiryBadge=view.findViewById(R.id.expiry_badge); edit=view.findViewById(R.id.edit); delete=view.findViewById(R.id.delete); }
     }
 }

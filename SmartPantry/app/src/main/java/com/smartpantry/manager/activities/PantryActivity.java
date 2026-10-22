@@ -29,17 +29,17 @@ public class PantryActivity extends AppCompatActivity {
         ((TextView)findViewById(R.id.primary_button)).setText("+ Add ingredient");
         findViewById(R.id.primary_button).setOnClickListener(v->startActivity(new Intent(this,AddEditIngredientActivity.class)));
         ((TextView)findViewById(R.id.empty)).setText("Your pantry is empty. Add your first ingredient!");
-        RecyclerView recycler=findViewById(R.id.recycler); recycler.setLayoutManager(new LinearLayoutManager(this));
+        RecyclerView recycler=findViewById(R.id.recycler); recycler.setLayoutManager(new LinearLayoutManager(this));   //5. START................................
         adapter=new PantryAdapter(new PantryAdapter.Actions() {
             @Override public void edit(PantryItem item) { startActivity(new Intent(PantryActivity.this,AddEditIngredientActivity.class).putExtra("item_id",item.id)); }
             @Override public void delete(PantryItem item) { new MaterialAlertDialogBuilder(PantryActivity.this).setTitle("Delete "+item.name+"?").setMessage("This will update your suggested recipes.").setNegativeButton("Cancel",null).setPositiveButton("Delete",(dialog,which)->worker.execute(()->{ try(DatabaseHelper db=new DatabaseHelper(PantryActivity.this)) { db.deletePantryItem(item.id); } runOnUiThread(()->load()); })).show(); }
         });
-        recycler.setAdapter(adapter); NavigationHelper.bind(this,findViewById(R.id.bottom_nav),R.id.nav_pantry);
+        recycler.setAdapter(adapter); NavigationHelper.bind(this,findViewById(R.id.bottom_nav),R.id.nav_pantry);  //5. END...................................
     }
-    private void load() { worker.execute(()->{ try(DatabaseHelper db=new DatabaseHelper(this)) {
+    private void load() { worker.execute(()->{ try(DatabaseHelper db=new DatabaseHelper(this)) {    //6. START.................................................
         List<PantryItem> items=db.getPantryItems(); boolean alerts=getSharedPreferences("settings",MODE_PRIVATE).getBoolean("expiry_alerts",true);
         runOnUiThread(()->{ adapter.setItems(items,alerts); findViewById(R.id.empty).setVisibility(items.isEmpty()?View.VISIBLE:View.GONE); });
     } }); }
     @Override protected void onResume() { super.onResume(); ((com.google.android.material.bottomnavigation.BottomNavigationView)findViewById(R.id.bottom_nav)).setSelectedItemId(R.id.nav_pantry); load(); }
-    @Override protected void onDestroy() { worker.shutdown(); super.onDestroy(); }
+    @Override protected void onDestroy() { worker.shutdown(); super.onDestroy(); }        //6. END.....................................................................
 }

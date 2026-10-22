@@ -19,12 +19,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override public void onConfigure(SQLiteDatabase db) { db.setForeignKeyConstraintsEnabled(true); }
     @Override public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE pantry_items(id INTEGER PRIMARY KEY, name TEXT NOT NULL, normalized_name TEXT NOT NULL, quantity REAL NOT NULL CHECK(quantity > 0), unit TEXT NOT NULL, expiry_date TEXT)");
-        db.execSQL("CREATE INDEX pantry_name_idx ON pantry_items(normalized_name)");
+        db.execSQL("CREATE INDEX pantry_name_idx ON pantry_items(normalized_name)");  //1. Start BELOW......................................................
         db.execSQL("CREATE TABLE recipes(id INTEGER PRIMARY KEY, name TEXT NOT NULL UNIQUE, description TEXT, instructions TEXT NOT NULL, preparation_time INTEGER)");
         db.execSQL("CREATE TABLE recipe_ingredients(id INTEGER PRIMARY KEY, recipe_id INTEGER NOT NULL REFERENCES recipes(id) ON DELETE CASCADE, ingredient_name TEXT NOT NULL, normalized_name TEXT NOT NULL, quantity REAL NOT NULL CHECK(quantity > 0), unit TEXT NOT NULL)");
         db.execSQL("CREATE INDEX recipe_ingredient_recipe_idx ON recipe_ingredients(recipe_id)");
         createRecipeUseTable(db);
-        seedRecipes(db);
+        seedRecipes(db);  //1. END ... RECIPE CREATE.................................................................................
     }
     @Override public void onUpgrade(SQLiteDatabase db,int oldVersion,int newVersion) {
         if(oldVersion<2) createRecipeUseTable(db);
@@ -36,14 +36,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private ContentValues pantryValues(String name,double quantity,String unit,String expiry) {
         ContentValues values=new ContentValues(); values.put("name",name.trim()); values.put("normalized_name",IngredientNormalizer.normalize(name)); values.put("quantity",quantity); values.put("unit",unit); values.put("expiry_date",expiry); return values;
     }
-    public long addPantryItem(String name,double quantity,String unit,String expiry) {
+    public long addPantryItem(String name,double quantity,String unit,String expiry) {   // 2. START...CRUD.....................................
         return getWritableDatabase().insertOrThrow("pantry_items",null,pantryValues(name,quantity,unit,expiry));
     }
     public boolean updatePantryItem(long id,String name,double quantity,String unit,String expiry) {
         return getWritableDatabase().update("pantry_items",pantryValues(name,quantity,unit,expiry),"id=?",new String[]{String.valueOf(id)})==1;
     }
     public boolean deletePantryItem(long id) {
-        return getWritableDatabase().delete("pantry_items","id=?",new String[]{String.valueOf(id)})==1;
+        return getWritableDatabase().delete("pantry_items","id=?",new String[]{String.valueOf(id)})==1;  // 2. END..........................................
     }
     private PantryItem readPantry(Cursor cursor) {
         return new PantryItem(cursor.getLong(0),cursor.getString(1),cursor.getString(2),cursor.getDouble(3),cursor.getString(4),cursor.isNull(5)?null:cursor.getString(5));
@@ -53,12 +53,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return cursor.moveToFirst()?readPantry(cursor):null;
         }
     }
-    public List<PantryItem> getPantryItems() {
+    public List<PantryItem> getPantryItems() {   //3. START......................Read method queries
         List<PantryItem> items=new ArrayList<>();
         try(Cursor cursor=getReadableDatabase().rawQuery("SELECT id,name,normalized_name,quantity,unit,expiry_date FROM pantry_items ORDER BY name COLLATE NOCASE,id",null)) {
             while(cursor.moveToNext()) items.add(readPantry(cursor));
         }
-        return items;
+        return items;  //3. END.........................................
     }
     private Recipe readRecipe(Cursor cursor) { return new Recipe(cursor.getLong(0),cursor.getString(1),cursor.getString(2),cursor.getString(3),cursor.getInt(4)); }
     public List<Recipe> getRecipes() {

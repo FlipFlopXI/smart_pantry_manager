@@ -29,7 +29,7 @@ public class SuggestedRecipesActivity extends AppCompatActivity {
     private RecipeAdapter adapter;
     private List<Recipe> recipes=new ArrayList<>();
     private List<PantryItem> pantry=new ArrayList<>();
-    private int selectedFilter=R.id.filter_available;
+    private int selectedFilter=R.id.filter_available;            //11. START...................................................END
     @Override protected void onCreate(Bundle state) {
         super.onCreate(state); setContentView(R.layout.activity_list);
         HelpUi.attach(this,HelpUi.Topic.RECIPES);
@@ -40,10 +40,10 @@ public class SuggestedRecipesActivity extends AppCompatActivity {
         RecyclerView recycler=findViewById(R.id.recycler); recycler.setLayoutManager(new LinearLayoutManager(this));
         adapter=new RecipeAdapter(recipe->startActivity(new Intent(this,RecipeDetailActivity.class).putExtra("recipe_id",recipe.id))); recycler.setAdapter(adapter);
         MaterialButtonToggleGroup filters=findViewById(R.id.filter_group);
-        filters.check(R.id.filter_available);
+        filters.check(R.id.filter_available);               //12. START..................................................................
         filters.addOnButtonCheckedListener((group,checkedId,isChecked)->{
             if(isChecked) { selectedFilter=checkedId; showSelectedRecipes(); }
-        });
+        });                                                 //12. END..........................................................................
         NavigationHelper.bind(this,findViewById(R.id.bottom_nav),R.id.nav_recipes);
         showSelectedRecipes();
     }
@@ -55,7 +55,7 @@ public class SuggestedRecipesActivity extends AppCompatActivity {
     private void showSelectedRecipes() {
         List<Recipe> displayed=new ArrayList<>();
         Map<Long,String> progressLabels=new HashMap<>();
-        for(Recipe recipe:recipes) {
+        for(Recipe recipe:recipes) {                        //13. START................................................................................
             RecipeMatchingService.MatchProgress progress=RecipeMatchingService.progress(recipe,pantry);
             boolean available=progress.total>0 && progress.matched==progress.total;
             boolean nearlyReady=progress.isNearlyReady();
@@ -66,7 +66,7 @@ public class SuggestedRecipesActivity extends AppCompatActivity {
                 if(!available) progressLabels.put(recipe.id,progress.matched+" of "+progress.total+" ingredients ready");
             }
         }
-        adapter.setItems(displayed,progressLabels);
+        adapter.setItems(displayed,progressLabels);           //13. END.................................................................................
         TextView subtitle=findViewById(R.id.subtitle);
         TextView empty=findViewById(R.id.empty);
         if(selectedFilter==R.id.filter_available) {

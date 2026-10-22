@@ -5,12 +5,14 @@ Smart Pantry Manager is a native Java Android app for tracking leftover ingredie
 ## Features
 
 - Create, view, edit and delete pantry ingredients with quantity, unit and optional expiry date.
-- Browse only recipes for which every required ingredient and quantity is available.
+- Browse recipes with Available, Nearly ready, and Unavailable filters. Available remains the default and requires every ingredient in sufficient quantity; Nearly ready requires at least half the ingredient requirements.
 - View full ingredients and numbered preparation steps for each recipe.
 - See live dashboard counts and optional expiring soon indicators.
 - See four color-coded Home jars for pantry items, possible recipes, expiring-soon items, and expired items.
 - Mark a recipe as cooked and reopen it from the five most recently cooked recipes on Home.
-- Store pantry and recipes offline with SQLite; persist the alert setting with SharedPreferences.
+- Switch between light and dark mode from Settings. The selected mode and alert setting persist with SharedPreferences.
+- Open a short, screen-specific guide from the Help button in the top right of every screen.
+- Store pantry and recipes offline with SQLite.
 
 ## Technology and database choice
 
@@ -42,7 +44,7 @@ From a terminal in `SmartPantry/`, run `gradlew.bat assembleDebug testDebugUnitT
 
 ## Strict matching
 
-`RecipeMatchingService.canMake()` checks every required ingredient. It normalizes common variations such as `tomatoes`/`tomato`, combines repeated recipe requirements, aggregates pantry rows only when units share a measurement dimension, converts kilograms to grams and litres to millilitres, and rejects the recipe when any requirement is missing or short. Mass and volume are never equated. There is no partial match list or shopping suggestion.
+`RecipeMatchingService.canMake()` checks every required ingredient. It normalizes common variations such as `tomatoes`/`tomato`, combines repeated recipe requirements, aggregates pantry rows only when units share a measurement dimension, converts kilograms to grams and litres to millilitres, and rejects the recipe when any requirement is missing or short. Mass and volume are never equated. The separate Nearly ready filter shows recipes with at least 50% of their requirements satisfied; partial matches never appear in the default Available list.
 
 ## Testing
 

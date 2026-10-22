@@ -48,7 +48,7 @@ public class AddEditIngredientActivity extends AppCompatActivity {
     private void save() {
         TextInputLayout nameLayout=findViewById(R.id.name_layout), quantityLayout=findViewById(R.id.quantity_layout);
         nameLayout.setError(null); quantityLayout.setError(null);
-        findViewById(R.id.unit_error).setVisibility(View.GONE);
+        findViewById(R.id.unit_error).setVisibility(View.GONE); //4. Start.................................................................................
         String cleanName=name.getText().toString().trim(); double amount=ValidationUtils.positiveQuantity(quantity.getText().toString());
         if(cleanName.isEmpty()) { nameLayout.setError("Enter an ingredient name"); return; }
         if(Double.isNaN(amount)) { quantityLayout.setError("Enter a number greater than zero"); return; }
@@ -58,7 +58,7 @@ public class AddEditIngredientActivity extends AppCompatActivity {
         worker.execute(()->{ boolean success; try(DatabaseHelper db=new DatabaseHelper(this)) { success=itemId<0?db.addPantryItem(cleanName,amount,selectedUnit,date)>0:db.updatePantryItem(itemId,cleanName,amount,selectedUnit,date); } catch(Exception error) { success=false; }
             final boolean saved=success;
             runOnUiThread(()->{ if(saved) { Toast.makeText(this,"Ingredient saved!",Toast.LENGTH_SHORT).show(); finish(); } else { save.setEnabled(true); Toast.makeText(this,"Could not save ingredient",Toast.LENGTH_LONG).show(); } });
-        });
+        });  //4. END...........................................................................................
     }
     @Override protected void onSaveInstanceState(Bundle state) { state.putString("expiry",expiry); super.onSaveInstanceState(state); }
     @Override protected void onDestroy() { worker.shutdown(); super.onDestroy(); }

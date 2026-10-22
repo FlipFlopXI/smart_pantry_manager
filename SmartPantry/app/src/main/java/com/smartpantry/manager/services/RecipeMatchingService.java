@@ -16,19 +16,19 @@ public final class RecipeMatchingService {
         for(Recipe recipe:recipes) if(canMake(recipe,pantry)) result.add(recipe);
         return result;
     }
-    public static boolean canMake(Recipe recipe,List<PantryItem> pantry) {
+    public static boolean canMake(Recipe recipe,List<PantryItem> pantry) {           //8. START.....................................................
         MatchProgress progress=progress(recipe,pantry);
-        return progress.total>0 && progress.matched==progress.total;
+        return progress.total>0 && progress.matched==progress.total;                //8. END ...........................................................
     }
     public static MatchProgress progress(Recipe recipe,List<PantryItem> pantry) {
         // Combine repeated recipe requirements before checking stock, so one pantry row is never reused twice.
-        Map<String,Double> requiredAmounts=new HashMap<>();
+        Map<String,Double> requiredAmounts=new HashMap<>();     //9. START...................................................................................
         for(RecipeIngredient need:recipe.ingredients) {
             String dimension=UnitConverter.dimension(need.unit);
             String key=need.normalizedName+"|"+dimension;
-            requiredAmounts.put(key,requiredAmounts.getOrDefault(key,0d)+UnitConverter.baseAmount(need.quantity,need.unit));
+            requiredAmounts.put(key,requiredAmounts.getOrDefault(key,0d)+UnitConverter.baseAmount(need.quantity,need.unit));    //9. END......................
         }
-        int matched=0;
+        int matched=0;    //10. START..................................................................................
         for(Map.Entry<String,Double> requirement:requiredAmounts.entrySet()) {
             String[] parts=requirement.getKey().split("\\|",2);
             if(parts[1].isEmpty()) continue;
@@ -40,7 +40,7 @@ public final class RecipeMatchingService {
             double required=requirement.getValue();
             if(available+1e-9*Math.max(1d,required)>=required) matched++;
         }
-        return new MatchProgress(matched,requiredAmounts.size());
+        return new MatchProgress(matched,requiredAmounts.size());    //10. END..............................................................
     }
     public static final class MatchProgress {
         public final int matched,total;
